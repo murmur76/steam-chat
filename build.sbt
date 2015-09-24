@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.11.4.play24",
   specs2 % Test
 )
 
