@@ -13,6 +13,8 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.4.play24",
+  "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
+  "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
   specs2 % Test
 )
 
