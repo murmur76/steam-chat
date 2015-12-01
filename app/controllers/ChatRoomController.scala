@@ -33,4 +33,21 @@ class ChatRoomController @Inject() (val reactiveMongoApi: ReactiveMongoApi)
       }
     }.getOrElse(Future.successful(BadRequest))
   }
+
+  case class ParamSpec(chatRoomId: String, userId: String)
+  implicit val format = Json.format[ParamSpec]
+
+  def join = Action.async(parse.json) { request =>
+    request.body.validate[ParamSpec].map { params =>
+      val chatRoomSelector = Json.obj("_id" -> Json.toJson(BSONObjectID(params.chatRoomId)))
+      val chatRoomModifier = Json.obj("$push" -> Json.obj("participants" -> params.userId))
+      val userSelector = Json.obj("userId" -> params.userId)
+      val userModifier = Json.obj("$push" -> Json.obj("chatRooms" -> params.chatRoomId))
+
+      Future.sequence(Seq(
+        chatRoomCollection.update(chatRoomSelector, chatRoomModifier),
+        userCollection.update(userSelector, userModifier)
+      )).map(_ => Ok("Success"))
+    }.getOrElse(Future.successful(BadRequest))
+  }
 }
